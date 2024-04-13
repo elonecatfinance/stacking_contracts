@@ -9,7 +9,7 @@ pub fn update_rewards(stake_pool: &mut StakePool, stake_entry: &mut StakeEntry) 
     Ok(())
 }
 
-pub fn update_stake_pool(stake_pool: &mut StakePool) -> ProgramResult {
+fn update_stake_pool(stake_pool: &mut StakePool) -> ProgramResult {
     let now = Clock::get().unwrap().unix_timestamp;
     stake_pool.rewards_per_token_stored = calculate_rewards_per_token(
         stake_pool.rewards_per_token_stored as u128, 

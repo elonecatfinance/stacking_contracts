@@ -7,7 +7,7 @@ use anchor_lang::prelude::*;
 use instructions::*;
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 
-declare_id!("GBqVfyHtdUyY8bbpyBy3YAGqA1nWT6K9A2JdmAS2pth5");
+declare_id!("Hu4zmfVMN346zZRbFahSDDRmDJW28goqAEpfc7Pvqojs");
 
 #[program]
 pub mod wmp_staking {
@@ -21,8 +21,8 @@ pub mod wmp_staking {
         instructions::set_stake_pool_rewards::handler(ctx, rewards_per_second)
     }
 
-    pub fn create_stake_pool(ctx: Context<CreateStakePool>, fee: u64) -> ProgramResult {
-        instructions::create_stake_pool::handler(ctx, fee)
+    pub fn create_stake_pool(ctx: Context<CreateStakePool>) -> ProgramResult {
+        instructions::create_stake_pool::handler(ctx)
     }
 
     pub fn create_stake_entry(ctx: Context<CreateStakeEntry>) -> ProgramResult {

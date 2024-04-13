@@ -1,11 +1,10 @@
 use anchor_lang::{solana_program::entrypoint::ProgramResult, prelude::*};
 
 use crate::state::StakePool;
-use crate::rewards::update_stake_pool;
 
 pub fn handler(ctx: Context<SetStakePoolRewards>, rewards_per_second: u64) -> ProgramResult {
     let stake_pool = &mut ctx.accounts.stake_pool;
-    update_stake_pool(stake_pool)?;
+    
     stake_pool.rewards_per_second = rewards_per_second;
 
     Ok(())

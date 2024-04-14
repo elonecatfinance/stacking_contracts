@@ -3,10 +3,10 @@ use anchor_lang::{
     solana_program::entrypoint::ProgramResult
 };
 use anchor_spl::{token::{Token, Mint, TokenAccount}, associated_token::AssociatedToken};
-use crate::state::{STAKE_POOL_PREFIX, REWARD_ESCROW_A_PREFIX, REWARD_ESCROW_B_PREFIX};
+use crate::state::{STAKE_POOL_PREFIX, REWARD_ESCROW_A_PREFIX, REWARD_ESCROW_B_PREFIX, REWARD_ESCROW_FEE_PREFIX};
 use crate::state::*;
 
-pub fn handler(ctx: Context<CreateStakePool>) -> ProgramResult {
+pub fn handler(ctx: Context<CreateStakePool>, fee: u64) -> ProgramResult {
     let global_data = &mut ctx.accounts.global_data;
     let stake_pool = &mut ctx.accounts.stake_pool;
 
@@ -20,11 +20,12 @@ pub fn handler(ctx: Context<CreateStakePool>) -> ProgramResult {
     stake_pool.mint_b = ctx.accounts.mint_b.key();
     stake_pool.escrow_a = ctx.accounts.escrow_a.key();
     stake_pool.escrow_b = ctx.accounts.escrow_b.key();
+    // stake_pool.escrow_fee = ctx.accounts.escrow_fee.key();
     stake_pool.creator = ctx.accounts.creator.key();
     stake_pool.balance = 0;
     stake_pool.last_update_timestamp = Clock::get().unwrap().unix_timestamp;
     stake_pool.rewards_per_token_stored = 0;
-    
+    stake_pool.fee = fee;
     global_data.id += 1;
 
     Ok(())
@@ -61,7 +62,17 @@ pub struct CreateStakePool<'info> {
         bump
     )]
     pub escrow_b: Box<Account<'info, TokenAccount>>,
-    
+
+    // #[account(
+    //     init,
+    //     payer = creator,
+    //     token::mint = mint_a,
+    //     token::authority = creator,
+    //     seeds = [REWARD_ESCROW_FEE_PREFIX.as_bytes(), &mint_a.key().to_bytes(), &creator.key().to_bytes()],
+    //     bump
+    // )]
+    // pub escrow_fee: Box<Account<'info, TokenAccount>>, 
+
     #[account(
         init,
         payer = creator,

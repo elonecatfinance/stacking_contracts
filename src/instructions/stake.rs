@@ -10,9 +10,10 @@ pub fn handler(ctx: Context<Stake>, amount: u64) -> ProgramResult {
     let stake_entry = &mut ctx.accounts.stake_entry;
 
     update_rewards(stake_pool, stake_entry)?;
-
-    stake_pool.balance += amount;
-    stake_entry.balance += amount;
+    
+    let fee_amount = amount * stake_pool.fee / 100;
+    stake_pool.balance += amount - fee_amount;
+    stake_entry.balance += amount - fee_amount;
 
     let accounts = Transfer {
         from: ctx.accounts.staker_token_a.to_account_info(),
@@ -22,7 +23,18 @@ pub fn handler(ctx: Context<Stake>, amount: u64) -> ProgramResult {
 
     let transfer_context = CpiContext::new(ctx.accounts.token_program.to_account_info(), accounts);
 
-    transfer(transfer_context, amount)?;
+    transfer(transfer_context, amount - fee_amount)?;
+
+
+    let accounts = Transfer {
+        from: ctx.accounts.staker_token_a.to_account_info(),
+        to: ctx.accounts.escrow_fee.to_account_info(),
+        authority: ctx.accounts.staker.to_account_info()
+    };
+
+    let transfer_context = CpiContext::new(ctx.accounts.token_program.to_account_info(), accounts);
+
+    transfer(transfer_context, fee_amount)?;
 
     Ok(())
 }
@@ -65,6 +77,16 @@ pub struct Stake<'info> {
             escrow_a.owner == stake_pool.key() @ ErrorCode::OwnerMismatch
     )]
     pub escrow_a: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        constraint = 
+            escrow_fee.mint == stake_pool.mint_a &&
+            escrow_fee.mint == mint_a.key() @ ErrorCode::TokenAMintMismatch,
+        constraint = 
+            escrow_fee.owner == stake_pool.creator.key() @ ErrorCode::OwnerMismatch
+    )]
+    pub escrow_fee: Account<'info, TokenAccount>,
 
     pub mint_a: Account<'info, Mint>,
 

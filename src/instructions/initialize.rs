@@ -26,7 +26,7 @@ pub struct Initialize<'info> {
         seeds=[GLOBAL_DATA_PREFIX.as_bytes()], 
         bump
     )]
-    pub global_data: Account<'info, GlobalData>,
+    pub global_data: Box<Account<'info, GlobalData>>,
 
     pub system_program: Program<'info, System>
 }

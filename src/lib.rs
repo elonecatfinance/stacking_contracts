@@ -7,7 +7,7 @@ use anchor_lang::prelude::*;
 use instructions::*;
 use anchor_lang::solana_program::entrypoint::ProgramResult;
 
-declare_id!("6j8jefZfexzzHkLAYGgon7MPevu74f3RNceZDxpXRaPR");
+declare_id!("zCqMotQEKDpxkbv96kFS4p9XcCN19T48vtumdFe1GFd");
 
 #[program]
 pub mod wmp_staking {

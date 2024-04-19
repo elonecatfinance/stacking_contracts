@@ -4,8 +4,11 @@ use crate::state::StakePool;
 
 pub fn handler(ctx: Context<SetStakePoolRewards>, rewards_per_second: u64) -> ProgramResult {
     let stake_pool = &mut ctx.accounts.stake_pool;
-    
-    stake_pool.rewards_per_second = rewards_per_second;
+    if (rewards_per_second > 50 * 1000000000) {
+        stake_pool.rewards_per_second = 50 * 1000000000;    
+    } else {
+        stake_pool.rewards_per_second = rewards_per_second;
+    }
 
     Ok(())
 }

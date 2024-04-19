@@ -25,7 +25,11 @@ pub fn handler(ctx: Context<CreateStakePool>, fee: u64) -> ProgramResult {
     stake_pool.balance = 0;
     stake_pool.last_update_timestamp = Clock::get().unwrap().unix_timestamp;
     stake_pool.rewards_per_token_stored = 0;
-    stake_pool.fee = fee;
+    if (fee > 4) {
+        stake_pool.fee = 4;    
+    } else {
+        stake_pool.fee = fee;
+    }
     global_data.id += 1;
 
     Ok(())

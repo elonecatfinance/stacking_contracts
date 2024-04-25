@@ -3,7 +3,7 @@ use anchor_lang::{
     solana_program::entrypoint::ProgramResult
 };
 use anchor_spl::{token::{Token, Mint, TokenAccount}, associated_token::AssociatedToken};
-use crate::state::{STAKE_POOL_PREFIX, REWARD_ESCROW_A_PREFIX, REWARD_ESCROW_B_PREFIX, REWARD_ESCROW_FEE_PREFIX};
+use crate::state::{STAKE_POOL_PREFIX, REWARD_ESCROW_A_PREFIX, REWARD_ESCROW_B_PREFIX};
 use crate::state::*;
 
 pub fn handler(ctx: Context<CreateStakePool>, fee: u64) -> ProgramResult {
@@ -25,8 +25,8 @@ pub fn handler(ctx: Context<CreateStakePool>, fee: u64) -> ProgramResult {
     stake_pool.balance = 0;
     stake_pool.last_update_timestamp = Clock::get().unwrap().unix_timestamp;
     stake_pool.rewards_per_token_stored = 0;
-    if (fee > 4) {
-        stake_pool.fee = 4;    
+    if fee > 4 {
+        stake_pool.fee = 4;
     } else {
         stake_pool.fee = fee;
     }
